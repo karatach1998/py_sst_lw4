@@ -22,8 +22,6 @@ class TestBTree(unittest.TestCase):
         t = BTree()
         for x in [5, 1, 4, 2, 3, 3]:
             t.insert(x)
-        print(t)
-        self.assertEqual(t.root.leaf, False)
         expected_structure = (False, 2, [2, 4], [
             (True, 1, [1], []),
             (True, 2, [3, 3], []),
