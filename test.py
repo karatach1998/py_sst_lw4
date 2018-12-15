@@ -10,20 +10,26 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(t.root.leaf, True)
         self.assertEqual(t.root.n, 0)
 
-    def _compare_btree(t, s):
+    def _compare_btree(self, t, s):
         leaf, n, keys, children = s
-        assertEqual(t.leaf, leaf)
-        assertEqual(t.n, n)
-        assertEqual(t.keys, keys)
+        self.assertEqual(t.leaf, leaf)
+        self.assertEqual(t.n, n)
+        self.assertEqual(t.keys, keys)
         for t, s in zip(t.children, children):
-            _compare_btree(t, s)
+            self._compare_btree(t, s)
 
     def test_insert(self):
         t = BTree()
         for x in [5, 1, 4, 2, 3, 3]:
             t.insert(x)
+        print(t)
         self.assertEqual(t.root.leaf, False)
-        expected_structure = (False, [], [])
+        expected_structure = (False, 2, [2, 4], [
+            (True, 1, [1], []),
+            (True, 2, [3, 3], []),
+            (True, 1, [5], [])
+        ])
+        self._compare_btree(t.root, expected_structure)
 
 
 if __name__ == '__main__':
