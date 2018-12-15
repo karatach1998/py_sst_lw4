@@ -1,6 +1,6 @@
 import unittest
 
-from main import BTree
+from main import BTree, Node
 
 
 class TestBTree(unittest.TestCase):
@@ -28,6 +28,17 @@ class TestBTree(unittest.TestCase):
             (True, 1, [5], [])
         ])
         self._compare_btree(t.root, expected_structure)
+
+    def test_search_empty(self):
+        t = BTree()
+        self.assertEqual(t.search(3), None)
+
+    def test_search(self):
+        t = BTree()
+        for x in [5, 1, 4, 2, 3, 3]:
+            t.insert(x)
+        self.assertEqual(t.search(3), (Node(keys=[3, 3], children=[]), 0))
+
 
 
 if __name__ == '__main__':
