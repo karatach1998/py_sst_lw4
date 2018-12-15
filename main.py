@@ -39,6 +39,16 @@ class Node:
         y.keys, y.children = y.keys[:T-1], y.children[:T-1]
         self.children[i:i+1] = [y, z]
 
+    def _search(self, k):
+        i, key = 0, None
+        try:
+            i, key = next(filter(lambda x: x[1] >= k, enumerate(self.keys)))
+        finally:
+            if key == k:
+                return self, i
+            return None if self.leaf else self.children[i]._search(k)
+
+
 
 @dataclass
 class BTree:
@@ -52,3 +62,6 @@ class BTree:
             s._insert(k)
         else:
             self.root._insert(k)
+
+    def search(self, k):
+        return self.root._search(k)
