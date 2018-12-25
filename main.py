@@ -40,14 +40,56 @@ class Node:
         self.children[i:i+1] = [y, z]
 
     def _search(self, k):
-        i, key = 0, None
-        try:
-            i, key = next(filter(lambda x: x[1] >= k, enumerate(self.keys)))
-        finally:
-            if key == k:
-                return self, i
-            return None if self.leaf else self.children[i]._search(k)
+        i, key = next(filter(lambda x: x[1] >= k, enumerate(self.keys)), (0, None))
+        if key == k:
+            return self, i
+        return None if self.leaf else self.children[i]._search(k)
 
+    def _delete(self, k):
+        # NOTE(sergey): Everywhere below x, y, z marks tree nodes
+        # in the following relation:
+        #
+        #    x[=self]
+        #      / \
+        #     y   z
+
+        i, key = next(filter(lambda x: x[1] >= k, enumerate(self.keys)), (self.n, None))
+        if key == k:
+            if self.leaf:
+                self.keys.pop(i)
+            elif self.children[i].n >= T:
+                self.keys[i] = self.children[i].keys[-1]
+                self.children[i]._delete(self.children[i].keys[-1])
+            elif self.children[i + 1].n >= T:
+                self.keys[i] = self.children[i + 1].keys[0]
+                self.children[i + 1]._delete(self.children[i + 1].keys[0])
+            else:
+                y = self.children[i]
+                z = self.children[i + 1]
+                y.keys.append(self.keys.pop(i))
+                y.keys.extend(z.keys)
+                y.children.extend(self.children.pop(i + 1))
+                y._delete(k)
+        else:
+            if self.leaf:
+                return
+            y = self.children[i]
+            if y.n == T - 1:
+                if i == self.n:
+                    i -= 1
+                    y = self.children[i]
+                z = self.children[i + 1]
+                if z.n >= T:
+                    y.keys.append(self.keys[i])
+                    self.keys[i] = z.keys.pop(0)
+                    if not z.leaf:
+                        y.children.append(z.children.pop(0))
+                else:
+                    y.keys.append(self.keys.pop(i))
+                    y.keys.extend(z.keys)
+                    y.children.extend(z.children)
+                    self.children.pop(i + 1)
+            y._delete(k)
 
 
 @dataclass
@@ -65,3 +107,8 @@ class BTree:
 
     def search(self, k):
         return self.root._search(k)
+
+    def delete(self, k):
+        self.root._delete(k)
+        if self.root.n == 0 and not self.root.leaf:
+            self.root = self.root.children.pop()
