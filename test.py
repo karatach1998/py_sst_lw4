@@ -39,6 +39,18 @@ class TestBTree(unittest.TestCase):
             t.insert(x)
         self.assertEqual(t.search(3), (Node(keys=[3, 3], children=[]), 0))
 
+    def test_delete(self):
+        t = BTree()
+        for x in [5, 1, 4, 2, 3, 3]:
+            t.insert(x)
+        t.delete(3)
+        expected_structure = (False, 2, [2, 4], [
+            (True, 1, [1], []),
+            (True, 1, [3], []),
+            (True, 1, [5], [])
+        ])
+        self._assert_btree(t.root, expected_structure)
+
 
 
 if __name__ == '__main__':
