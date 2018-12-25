@@ -14,7 +14,9 @@ class TestBTree(unittest.TestCase):
         leaf, n, keys, children = s
         self.assertEqual(t.leaf, leaf)
         self.assertEqual(t.n, n)
-        self.assertEqual(t.keys, keys)
+        self.assertEqual(t.keys, keys, 'Keys differ')
+        self.assertEqual(len(t.children), len(children),
+                        "Children lists have different lengths")
         for t, s in zip(t.children, children):
             self._assert_btree(t, s)
 
