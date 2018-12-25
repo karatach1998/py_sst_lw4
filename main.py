@@ -36,7 +36,7 @@ class Node:
         y = self.children[i]
         z = Node(keys=y.keys[T:], children=y.children[T:])
         self.keys.insert(i, y.keys[T-1])
-        y.keys, y.children = y.keys[:T-1], y.children[:T-1]
+        y.keys, y.children = y.keys[:T-1], y.children[:T]
         self.children[i:i+1] = [y, z]
 
     def _search(self, k):
