@@ -56,10 +56,10 @@ class BTree:
 
     def insert(self, k):
         if self.root.n == 2 * T - 1:
-            s = self.root
-            self.root = Node(children=[s])
+            r = self.root
+            self.root = Node(children=[r])
             self.root._split(0)
-            s._insert(k)
+            self.root._insert(k)
         else:
             self.root._insert(k)
 
