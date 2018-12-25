@@ -20,7 +20,7 @@ class TestBTree(unittest.TestCase):
         for t, s in zip(t.children, children):
             self._assert_btree(t, s)
 
-    def test_insert(self):
+    def test_insert_same(self):
         t = BTree()
         for x in [6, 1, 4, 5, 2, 3, 3]:
             t.insert(x)
@@ -28,6 +28,23 @@ class TestBTree(unittest.TestCase):
             (True, 1, [1], []),
             (True, 2, [3, 3], []),
             (True, 2, [5, 6], [])
+        ])
+        self._assert_btree(t.root, expected_structure)
+
+    def test_insert_many(self):
+        t = BTree()
+        for x in [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]:
+            t.insert(x)
+        expected_structure = (False, 1, [7], [
+            (False, 2, [3, 5], [
+                (True, 2, [1, 2], []),
+                (True, 1, [4], []),
+                (True, 1, [6], [])
+            ]),
+            (False, 1, [9], [
+                (True, 1, [8], []),
+                (True, 1, [10], [])
+            ])
         ])
         self._assert_btree(t.root, expected_structure)
 
@@ -63,12 +80,26 @@ class TestBTree(unittest.TestCase):
         expected_structure = (False, 1, [7], [
             (False, 1, [5], [
                 (True, 2, [3, 4], []),
-                (True, 1, [6], []),
+                (True, 1, [6], [])
             ]),
             (False, 1, [9], [
                 (True, 1, [8], []),
                 (True, 1, [10], [])
             ])
+        ])
+        self._assert_btree(t.root, expected_structure)
+
+    def test_delete_last_in_leaf_to_force_tree_shrink_in_height2(self):
+        t = BTree()
+        for x in [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]:
+            t.insert(x)
+        t.delete(2)
+        t.delete(1)
+        t.delete(8)
+        expected_structure = (False, 2, [5, 7], [
+            (True, 2, [3, 4], []),
+            (True, 1, [6], []),
+            (True, 2, [9, 10], [])
         ])
         self._assert_btree(t.root, expected_structure)
 
