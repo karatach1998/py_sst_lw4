@@ -89,7 +89,7 @@ class TestBTree(unittest.TestCase):
         ])
         self._assert_btree(t.root, expected_structure)
 
-    def test_delete_last_in_leaf_to_force_tree_shrink_in_height2(self):
+    def test_delete_last_in_leaf_to_force_merge_subtree_in_single_son(self):
         t = BTree()
         for x in [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]:
             t.insert(x)

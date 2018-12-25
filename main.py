@@ -57,22 +57,23 @@ class Node:
         if key == k:
             if self.leaf:
                 self.keys.pop(i)
-            elif self.children[i].n >= T:
-                self.keys[i] = self.children[i].keys[-1]
-                self.children[i]._delete(self.children[i].keys[-1])
-            elif self.children[i + 1].n >= T:
-                self.keys[i] = self.children[i + 1].keys[0]
-                self.children[i + 1]._delete(self.children[i + 1].keys[0])
+                return
+
+            y = self.children[i]
+            z = self.children[i + 1]
+            if y.n >= T:
+                self.keys[i] = y.keys[-1]
+                y._delete(y.keys[-1])
+            elif z.n >= T:
+                self.keys[i] = z.keys[0]
+                z._delete(z.keys[0])
             else:
-                y = self.children[i]
-                z = self.children[i + 1]
-                y.keys.append(self.keys.pop(i))
-                y.keys.extend(z.keys)
-                y.children.extend(self.children.pop(i + 1))
+                self._merge(i)
                 y._delete(k)
         else:
             if self.leaf:
                 return
+
             y = self.children[i]
             if y.n == T - 1:
                 if i == self.n:
@@ -85,11 +86,19 @@ class Node:
                     if not z.leaf:
                         y.children.append(z.children.pop(0))
                 else:
-                    y.keys.append(self.keys.pop(i))
-                    y.keys.extend(z.keys)
-                    y.children.extend(z.children)
-                    self.children.pop(i + 1)
+                    self._merge(i)
             y._delete(k)
+
+    def _merge(self, i):
+        y = self.children[i]
+        z = self.children[i + 1]
+        k = self.keys[i]
+
+        y.keys.append(k)
+        y.keys.extend(z.keys)
+        y.children.extend(z.children)
+        self.keys.pop(i)
+        self.children.pop(i + 1)
 
 
 @dataclass
