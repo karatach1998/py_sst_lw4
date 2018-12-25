@@ -10,24 +10,24 @@ class TestBTree(unittest.TestCase):
         self.assertEqual(t.root.leaf, True)
         self.assertEqual(t.root.n, 0)
 
-    def _compare_btree(self, t, s):
+    def _assert_btree(self, t, s):
         leaf, n, keys, children = s
         self.assertEqual(t.leaf, leaf)
         self.assertEqual(t.n, n)
         self.assertEqual(t.keys, keys)
         for t, s in zip(t.children, children):
-            self._compare_btree(t, s)
+            self._assert_btree(t, s)
 
     def test_insert(self):
         t = BTree()
-        for x in [5, 1, 4, 2, 3, 3]:
+        for x in [6, 1, 4, 5, 2, 3, 3]:
             t.insert(x)
         expected_structure = (False, 2, [2, 4], [
             (True, 1, [1], []),
             (True, 2, [3, 3], []),
-            (True, 1, [5], [])
+            (True, 2, [5, 6], [])
         ])
-        self._compare_btree(t.root, expected_structure)
+        self._assert_btree(t.root, expected_structure)
 
     def test_search_empty(self):
         t = BTree()
